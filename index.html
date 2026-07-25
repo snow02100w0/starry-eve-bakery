@@ -822,7 +822,7 @@ function render(){
         <button class="icon-btn" onclick="event.stopPropagation();editItem('gallery',${i})">✎</button>
       </div>
       ${hasImg
-        ? `<img src="${escapeHtml(g.url)}" alt="${escapeHtml(g.caption||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        ? `<img src="${escapeHtml(g.url)}" alt="${escapeHtml(g.caption||'')}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
            <div class="broken" style="display:none">🖼 圖片載入失敗<br><small style="opacity:.6;font-size:10px;word-break:break-all">${escapeHtml(g.url.slice(0,40))}...</small></div>`
         : `<div class="broken">（尚未設定圖片）</div>`}
       ${g.caption?`<div class="caption">${escapeHtml(g.caption)}</div>`:''}
