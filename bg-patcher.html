@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>星夕烘焙屋 · 背景預載工具</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --ink:#e8dfc7;
+    --ink-soft:#b9ac86;
+    --gold:#f4d29a;
+    --gold-2:#c99a5e;
+    --panel:rgba(20,18,45,.72);
+    --panel-b:rgba(244,210,154,.28);
+    --bg:linear-gradient(180deg,#050826 0%,#1a1746 25%,#4b2a5e 48%,#a35146 60%,#e6a45c 66%,#f4c98a 68%,#1a1c3a 80%,#0a0d2a 100%);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;min-height:100%;font-family:"Noto Serif TC",serif;color:var(--ink);background:var(--bg);background-attachment:fixed}
+  body{padding:40px 20px 80px}
+  .wrap{max-width:760px;margin:0 auto}
+  h1{font-family:"Cinzel","Noto Serif TC",serif;letter-spacing:4px;color:var(--gold);text-align:center;font-weight:500;font-size:26px;margin:0 0 6px}
+  .sub{text-align:center;color:var(--ink-soft);letter-spacing:2px;font-size:13px;margin-bottom:28px}
+  .card{background:var(--panel);border:1px solid var(--panel-b);border-radius:16px;padding:24px 26px;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.4);margin-bottom:20px}
+  .card h3{margin:0 0 12px;font-size:15px;color:var(--gold);letter-spacing:3px;font-weight:500}
+  .card p{margin:0 0 10px;font-size:13px;color:var(--ink-soft);line-height:1.7}
+  label{display:block;margin:14px 0 6px;font-size:13px;letter-spacing:2px;color:var(--ink)}
+  input[type=text],input[type=url]{width:100%;padding:11px 14px;background:rgba(0,0,0,.35);border:1px solid var(--panel-b);border-radius:8px;color:var(--ink);font-size:14px;outline:none;font-family:inherit}
+  input[type=text]:focus,input[type=url]:focus{border-color:var(--gold)}
+  .file-drop{border:2px dashed var(--panel-b);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:.25s;background:rgba(0,0,0,.15)}
+  .file-drop:hover,.file-drop.hover{border-color:var(--gold);background:rgba(244,210,154,.06)}
+  .file-drop .big{font-size:15px;color:var(--gold);letter-spacing:3px;margin-bottom:6px}
+  .file-drop .small{font-size:12px;color:var(--ink-soft);letter-spacing:2px}
+  .file-name{margin-top:10px;font-size:12px;color:var(--gold);letter-spacing:1px;word-break:break-all}
+  input[type=file]{display:none}
+  .row{display:flex;gap:10px;align-items:center;margin-top:10px;font-size:13px;color:var(--ink-soft)}
+  .row input[type=checkbox]{accent-color:var(--gold);width:16px;height:16px}
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+  .btn{padding:12px 28px;border-radius:10px;border:1px solid var(--panel-b);background:rgba(0,0,0,.3);color:var(--ink);font-family:inherit;font-size:14px;letter-spacing:3px;cursor:pointer;transition:.2s}
+  .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+  .btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#1a1030;border-color:var(--gold);font-weight:600}
+  .btn.primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 10px 30px rgba(247,200,120,.3)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .log{margin-top:16px;font-size:12px;line-height:1.9;color:var(--ink-soft);background:rgba(0,0,0,.35);border:1px solid var(--panel-b);border-radius:8px;padding:12px 14px;letter-spacing:1px;font-family:"SF Mono","Consolas",monospace;max-height:220px;overflow:auto}
+  .log .ok{color:#95e0a7}
+  .log .warn{color:#f7d38a}
+  .log .err{color:#ef8a8a}
+  .preview{margin-top:14px;border-radius:10px;overflow:hidden;border:1px solid var(--panel-b);background:rgba(0,0,0,.35);aspect-ratio:16/7;background-size:cover;background-position:center;display:flex;align-items:flex-end;justify-content:center;padding:14px;color:var(--gold);letter-spacing:3px;font-size:12px;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:6px;letter-spacing:1px}
+  a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>背景預載工具</h1>
+  <div class="sub">Bake-in Default Background · 消除黃昏底圖與自訂背景切換的閃爍</div>
+
+  <div class="card">
+    <h3>1. 選擇要修改的 index.html</h3>
+    <p>將你 GitHub Pages 上使用的 <code>index.html</code> 拖進來，或點擊選擇。工具會在瀏覽器端處理，不會上傳。</p>
+    <label class="file-drop" id="drop">
+      <div class="big">拖曳檔案至此</div>
+      <div class="small">或點擊選擇 index.html</div>
+      <div class="file-name" id="fileName"></div>
+      <input type="file" id="fileInput" accept=".html,.htm,text/html">
+    </label>
+  </div>
+
+  <div class="card">
+    <h3>2. 背景圖網址</h3>
+    <p>建議使用 jsDelivr CDN，亞洲速度極快：<br>
+      <code>https://cdn.jsdelivr.net/gh/使用者名稱/repo名稱@main/images/xxx.png</code>
+    </p>
+    <label>圖片直鏈 URL</label>
+    <input type="url" id="bgUrl" placeholder="https://cdn.jsdelivr.net/gh/snow02100w0/starry-eve-bakery@main/images/xxx.png">
+    <div class="hint">留空的話，會沿用檔案裡目前 DEFAULT_DATA.background.url 的值。</div>
+    <div class="preview" id="preview" style="display:none">預覽</div>
+  </div>
+
+  <div class="card">
+    <h3>3. 選項</h3>
+    <div class="row">
+      <input type="checkbox" id="optPreload" checked>
+      <label for="optPreload" style="margin:0">加入 &lt;link rel="preload"&gt; 讓瀏覽器提前下載背景</label>
+    </div>
+    <div class="row">
+      <input type="checkbox" id="optCssBake" checked>
+      <label for="optCssBake" style="margin:0">把背景圖寫進 .custom-bg 的 inline CSS（Method B 核心）</label>
+    </div>
+    <div class="row">
+      <input type="checkbox" id="optFadeIn" checked>
+      <label for="optFadeIn" style="margin:0">加入淡入過渡動畫（0.6s ease）</label>
+    </div>
+    <div class="row">
+      <input type="checkbox" id="optBumpKey">
+      <label for="optBumpKey" style="margin:0">升級 STORE_KEY（強制所有訪客用新預設值，會清空他們的 localStorage 資料）</label>
+    </div>
+    <div class="row">
+      <input type="checkbox" id="optUpdateDefault" checked>
+      <label for="optUpdateDefault" style="margin:0">同步更新 DEFAULT_DATA.background.url</label>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="btnPreview" disabled>檢查修改點</button>
+    <button class="btn primary" id="btnProcess" disabled>產生新的 index.html</button>
+  </div>
+
+  <div class="log" id="log" style="display:none"></div>
+</div>
+
+<script>
+let fileText = null;
+let fileName = "index.html";
+
+const $ = id => document.getElementById(id);
+const logEl = $("log");
+const log = (msg, cls="") => {
+  logEl.style.display = "block";
+  const line = document.createElement("div");
+  if(cls) line.className = cls;
+  line.textContent = msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+};
+const clearLog = () => { logEl.innerHTML = ""; logEl.style.display = "none"; };
+
+/* --------- 檔案讀取 --------- */
+const drop = $("drop"), fileInput = $("fileInput"), fileNameEl = $("fileName");
+drop.addEventListener("click", () => fileInput.click());
+drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("hover"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("hover"));
+drop.addEventListener("drop", e => {
+  e.preventDefault();
+  drop.classList.remove("hover");
+  if(e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener("change", e => {
+  if(e.target.files[0]) readFile(e.target.files[0]);
+});
+
+function readFile(file){
+  fileName = file.name;
+  fileNameEl.textContent = "已載入：" + file.name + " (" + Math.round(file.size/1024) + " KB)";
+  const reader = new FileReader();
+  reader.onload = e => {
+    fileText = e.target.result;
+    $("btnPreview").disabled = false;
+    $("btnProcess").disabled = false;
+    // 嘗試自動抓出目前的預設 URL
+    const m = fileText.match(/"background"\s*:\s*\{[^}]*"url"\s*:\s*"([^"]*)"/);
+    if(m && m[1] && !$("bgUrl").value){
+      $("bgUrl").value = m[1];
+      updatePreview();
+      log("偵測到現有 DEFAULT_DATA.background.url", "ok");
+      log("  " + m[1]);
+    }
+  };
+  reader.readAsText(file, "utf-8");
+}
+
+/* --------- 預覽 --------- */
+$("bgUrl").addEventListener("input", updatePreview);
+function updatePreview(){
+  const url = $("bgUrl").value.trim();
+  const p = $("preview");
+  if(url){
+    p.style.display = "flex";
+    p.style.backgroundImage = `url("${url.replace(/"/g,'\\"')}")`;
+    p.textContent = "PREVIEW";
+  } else {
+    p.style.display = "none";
+  }
+}
+
+/* --------- 檢查 --------- */
+$("btnPreview").addEventListener("click", () => {
+  clearLog();
+  if(!fileText){ log("尚未載入 index.html", "err"); return; }
+  const checks = [
+    { name: ".custom-bg CSS 規則", re: /\.custom-bg\s*\{[^}]*display\s*:\s*none[^}]*\}/, hint: "找到後會移除 display:none 並注入 background-image" },
+    { name: "DEFAULT_DATA.background 欄位", re: /"background"\s*:\s*\{[^}]*"url"\s*:\s*"[^"]*"/, hint: "找到後可同步更新 URL" },
+    { name: "STORE_KEY 常數", re: /const\s+STORE_KEY\s*=\s*"[^"]+"/, hint: "找到後可升級版本號" },
+    { name: "</head> 標籤", re: /<\/head>/i, hint: "找到後可插入 preload link" },
+  ];
+  checks.forEach(c => {
+    if(c.re.test(fileText)){
+      log("✓ " + c.name + " — " + c.hint, "ok");
+    } else {
+      log("✗ " + c.name + " — 未找到", "warn");
+    }
+  });
+});
+
+/* --------- 主處理 --------- */
+$("btnProcess").addEventListener("click", () => {
+  clearLog();
+  if(!fileText){ log("尚未載入 index.html", "err"); return; }
+  const url = $("bgUrl").value.trim();
+  if(!url){
+    // 嘗試從檔案抓現有值
+    const m = fileText.match(/"background"\s*:\s*\{[^}]*"url"\s*:\s*"([^"]*)"/);
+    if(!(m && m[1])){
+      log("請輸入背景 URL，或先載入含有 DEFAULT_DATA.background.url 的檔案", "err");
+      return;
+    }
+  }
+  const finalUrl = url || fileText.match(/"background"\s*:\s*\{[^}]*"url"\s*:\s*"([^"]*)"/)[1];
+  const urlCss = finalUrl.replace(/"/g,'\\"');
+  const urlAttr = finalUrl.replace(/"/g,'&quot;');
+
+  let src = fileText;
+  let changed = 0;
+
+  /* 1. Method B —— 修改 .custom-bg CSS */
+  if($("optCssBake").checked){
+    const cssRe = /(\.custom-bg\s*\{)([^}]*)\}/;
+    if(cssRe.test(src)){
+      src = src.replace(cssRe, (_m, head, body) => {
+        // 移除 display:none 或 display:block
+        let b = body.replace(/display\s*:\s*(none|block)\s*;?/g, "");
+        // 移除已存在的 background-image
+        b = b.replace(/background-image\s*:[^;]*;?/g, "");
+        // 移除已存在的 opacity/transition（如果之前工具跑過）
+        b = b.replace(/opacity\s*:[^;]*;?/g, "");
+        b = b.replace(/transition\s*:[^;]*;?/g, "");
+        // 清理多餘分號
+        b = b.replace(/;;+/g, ";").replace(/^\s*;/,"").trim();
+        if(!b.endsWith(";")) b += ";";
+        let inject = `display:block;background-image:url("${urlCss}");`;
+        if($("optFadeIn").checked){
+          inject += "opacity:0;transition:opacity .6s ease;";
+        }
+        return head + b + inject + "}";
+      });
+      log("✓ 已將背景寫入 .custom-bg inline CSS", "ok");
+      changed++;
+    } else {
+      log("✗ 未找到 .custom-bg 規則，跳過此項", "warn");
+    }
+  }
+
+  /* 2. 淡入邏輯 —— 修改 renderBackground */
+  if($("optFadeIn").checked && $("optCssBake").checked){
+    // 使用預載圖片後淡入
+    const preloadJs = `
+/* [bg-patcher] 淡入處理 */
+(function(){
+  const bg = document.getElementById("customBg");
+  if(!bg) return;
+  const url = getComputedStyle(bg).backgroundImage.replace(/^url\\(["']?|["']?\\)$/g,'');
+  if(!url || url==="none") { bg.style.opacity = 1; return; }
+  const im = new Image();
+  im.onload = ()=>{ bg.style.opacity = 1; };
+  im.onerror = ()=>{ bg.style.opacity = 1; };
+  im.src = url;
+})();
+`;
+    // 插到 </body> 之前
+    if(/<\/body>/i.test(src) && !src.includes("[bg-patcher] 淡入處理")){
+      src = src.replace(/<\/body>/i, `<script>${preloadJs}<\/script>\n</body>`);
+      log("✓ 已插入淡入處理 script", "ok");
+      changed++;
+    }
+  }
+
+  /* 3. Preload link */
+  if($("optPreload").checked){
+    // 避免重複插入
+    const existing = new RegExp(`<link[^>]+rel=["']preload["'][^>]+href=["']${finalUrl.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}["']`, "i");
+    if(!existing.test(src)){
+      // 移除舊的 bg-patcher preload（如果之前跑過）
+      src = src.replace(/<link[^>]+data-bg-patcher[^>]*>\s*/gi, "");
+      const link = `<link rel="preload" as="image" href="${urlAttr}" fetchpriority="high" data-bg-patcher>\n`;
+      if(/<\/head>/i.test(src)){
+        src = src.replace(/<\/head>/i, link + "</head>");
+        log("✓ 已插入 <link rel=\"preload\">", "ok");
+        changed++;
+      } else {
+        log("✗ 未找到 </head>，跳過 preload", "warn");
+      }
+    } else {
+      log("· preload link 已存在，略過", "warn");
+    }
+  }
+
+  /* 4. 更新 DEFAULT_DATA.background.url */
+  if($("optUpdateDefault").checked && url){
+    const dRe = /("background"\s*:\s*\{[^}]*?"url"\s*:\s*")([^"]*)(")/;
+    if(dRe.test(src)){
+      src = src.replace(dRe, `$1${finalUrl.replace(/\$/g,'$$$$')}$3`);
+      log("✓ 已更新 DEFAULT_DATA.background.url", "ok");
+      changed++;
+    } else {
+      log("✗ 未找到 DEFAULT_DATA.background.url，跳過", "warn");
+    }
+  }
+
+  /* 5. STORE_KEY 升級 */
+  if($("optBumpKey").checked){
+    const kRe = /(const\s+STORE_KEY\s*=\s*")([^"]+)(")/;
+    const m = src.match(kRe);
+    if(m){
+      const cur = m[2];
+      const vMatch = cur.match(/^(.*?)(\d+)$/);
+      const next = vMatch ? vMatch[1] + (parseInt(vMatch[2],10)+1) : cur + "_v2";
+      src = src.replace(kRe, `$1${next}$3`);
+      log(`✓ STORE_KEY 由 "${cur}" 升級為 "${next}"`, "ok");
+      changed++;
+    } else {
+      log("✗ 未找到 STORE_KEY 常數，跳過", "warn");
+    }
+  }
+
+  if(changed === 0){
+    log("沒有任何項目被修改，請檢查上方選項或原始檔案內容", "err");
+    return;
+  }
+
+  /* 下載 */
+  const blob = new Blob([src], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  const dl = fileName.replace(/(\.html?)$/i, ".patched$1") || "index.patched.html";
+  a.href = URL.createObjectURL(blob);
+  a.download = dl.match(/\.html?$/i) ? dl : (dl + ".html");
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  log(`✓ 完成！共修改 ${changed} 處，已觸發下載`, "ok");
+  log("檔名：" + a.download, "ok");
+});
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"75124c326cb447fe934cde04713ae013","r":1}' crossorigin="anonymous"></script>
+</body>
+</html>
