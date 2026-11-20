@@ -266,7 +266,7 @@ body.admin .add-card{display:flex}
 <body>
 
 <!-- 背景 -->
-<div class="scene" aria-hidden="true">
+<div class="scene" aria-hidden="true" style="display:none">
   <div class="milky"></div>
   <div class="stars"></div>
   <div class="stars2"></div>
@@ -855,14 +855,18 @@ document.querySelectorAll("#nav button[data-page]").forEach(btn=>{
 /* ============ 渲染 ============ */
 function renderBackground(){
   const bg = document.getElementById("customBg");
+  const scene = document.querySelector(".scene");
   if(D.background && D.background.url){
     bg.style.backgroundImage = `url("${D.background.url.replace(/"/g,'\\"')}")`;
     bg.style.setProperty("--bg-dim", ((D.background.dim||0)/100));
     bg.style.setProperty("--bg-blur", (D.background.blur||0) + "px");
     bg.classList.add("on");
+    if(scene) scene.style.display = "none";
   } else {
     bg.classList.remove("on");
     bg.style.backgroundImage = "";
+    if(scene) scene.style.display = "";
+  }
   }
   // 面板玻璃模糊度
   const pb = (D.background && typeof D.background.panelBlur === "number") ? D.background.panelBlur : 14;
